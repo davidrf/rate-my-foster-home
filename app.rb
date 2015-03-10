@@ -1,7 +1,6 @@
 require 'sinatra'
 require 'sinatra/reloader'
 require 'sinatra/flash'
-require 'csv'
 require 'date'
 require 'json'
 require 'pg'
@@ -70,18 +69,6 @@ def retrieve_homes_for(user_id)
     homes = conn.exec_params(sql_query, [user_id])
   end
   homes.to_a
-end
-
-def delete(home)
-  table = CSV.table('homes.csv')
-
-  table.delete_if do |row|
-    row[:home] == home
-  end
-
-  File.open('homes.csv', 'w') do |f|
-    f.write(table.to_csv)
-  end
 end
 
 def add_home(home_name)
