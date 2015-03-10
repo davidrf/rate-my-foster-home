@@ -31,6 +31,7 @@ Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
 end
 
 def db_connection
+  puts "CONNECTION_SETTINGS: #{database_options}"
   begin
     connection = PG.connect(database_options)
     yield(connection)
