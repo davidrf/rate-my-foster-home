@@ -23,7 +23,7 @@ def db_connection
   connection_settings = { dbname: ENV["DATABASE_NAME"] || "foster_homes" }
 
   if ENV["DATABASE_HOST"]
-    connection_settings[:host] = ENV["DATABASE_HOST"]
+    connection_settings[:host] = ENV["DATAB ASE_HOST"]
   end
 
   if ENV["DATABASE_USER"]
@@ -69,7 +69,9 @@ def add_user(info)
   db_connection do |conn|
     user_id = conn.exec_params(sql_query, [info[:username], info[:password]])
   end
-  user_id.to_a[0]["id"]
+  user_id = user_id.to_a[0]["id"]
+  [1, 2, 3, 4].each { |home| assign_home(user_id, home) }
+  user_id
 end
 
 def retrieve_homes_for(user_id)
