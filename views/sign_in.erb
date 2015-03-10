@@ -1,0 +1,9 @@
+<form form action="/sign_in" method="post">
+  <fieldset>
+    <legend>Sign-In</legend>
+    <input type="text" name="username" placeholder="Username" value="<%= @input["username"] %>">
+    <input type="password" name="password" placeholder="Password" value="<%= @input["password"] %>">
+    <input type="submit" value="Login">
+    <a href="/register">Register</a>
+  </fieldset>
+</form>

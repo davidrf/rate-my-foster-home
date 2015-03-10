@@ -1,0 +1,15 @@
+<form action="/foster_homes/<%= @home_id %>/review/<%= @person %>" method="post">
+  <label for="name">Name</label>
+  <input id="name" type="text" name="reviewer" value="<%= @input["reviewer"] %>">
+  <label for="datepicker">Date</label>
+  <input id="datepicker" type="text" name="review_date" value="<%= Time.now.to_date.strftime("%m/%d/%Y") %>">
+  <p><%= @survey_question %></p>
+  <select name="rating">
+    <% (0..10).each do |number| %>
+    <option value="<%= number %>"><%= number %></option>
+    <% end %>
+  </select>
+  <p>We apreciate your feedback. Please explain your rating.</p>
+  <textarea name="explanation"><%= @input["explanation"] %></textarea>
+  <input type="submit" class="login login-submit">
+</form>
