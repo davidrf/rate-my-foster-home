@@ -6,14 +6,23 @@ require 'json'
 require 'pg'
 
 use Rack::Session::Cookie, {
-  secret: "secret"
+  secret: ENV["COOKIE_SECRET"] || "secret"
 }
 
-DATABASE = "foster_homes"
+database_options = {}
 
 configure :development, :test do
   require 'pry'
   require 'faker'
+
+  database_options[:dbname] = "foster_homes"
+end
+
+configure :production do
+  database_options[:dbname] = ENV["DATABASE_NAME"]
+  database_options[:host] = ENV["DATABASE_HOST"]
+  database_options[:user] = ENV["DATABASE_USER"]
+  database_options[:password] = ENV["DATABASE_PASS"]
 end
 
 Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
@@ -23,7 +32,7 @@ end
 
 def db_connection
   begin
-    connection = PG.connect(dbname: DATABASE)
+    connection = PG.connect(database_options)
     yield(connection)
   ensure
     connection.close
