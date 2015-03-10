@@ -20,13 +20,22 @@ Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
 end
 
 def db_connection
+  connection_settings = { dbname: ENV["DATABASE_NAME"] || "foster_homes" }
+
+  if ENV["DATABASE_HOST"]
+    connection_settings[:host] = ENV["DATABASE_HOST"]
+  end
+
+  if ENV["DATABASE_USER"]
+    connection_settings[:user] = ENV["DATABASE_USER"]
+  end
+
+  if ENV["DATABASE_PASS"]
+    connection_settings[:password] = ENV["DATABASE_PASS"]
+  end
+
   begin
-    connection = PG.connect({
-      dbname: ENV["DATABASE_NAME"] || "foster_homes",
-      host: ENV["DATABASE_HOST"],
-      user: ENV["DATABASE_USER"],
-      password: ENV["DATABASE_PASS"]
-    })
+    connection = PG.connect(connection_settings)
     yield(connection)
   ensure
     connection.close
