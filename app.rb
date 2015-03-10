@@ -9,20 +9,9 @@ use Rack::Session::Cookie, {
   secret: ENV["COOKIE_SECRET"] || "secret"
 }
 
-database_options = {}
-
 configure :development, :test do
   require 'pry'
   require 'faker'
-
-  database_options[:dbname] = "foster_homes"
-end
-
-configure :production do
-  database_options[:dbname] = ENV["DATABASE_NAME"]
-  database_options[:host] = ENV["DATABASE_HOST"]
-  database_options[:user] = ENV["DATABASE_USER"]
-  database_options[:password] = ENV["DATABASE_PASS"]
 end
 
 Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
@@ -31,8 +20,22 @@ Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
 end
 
 def db_connection
+  connection_settings = { dbname: ENV["DATABASE_NAME"] || "foster_homes" }
+
+  if ENV["DATABASE_HOST"]
+    connection_settings[:host] = ENV["DATABASE_HOST"]
+  end
+
+  if ENV["DATABASE_USER"]
+    connection_settings[:user] = ENV["DATABASE_USER"]
+  end
+
+  if ENV["DATABASE_PASS"]
+    connection_settings[:password] = ENV["DATABASE_PASS"]
+  end
+
   begin
-    connection = PG.connect(database_options)
+    connection = PG.connect(connection_settings)
     yield(connection)
   ensure
     connection.close
