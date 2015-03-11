@@ -2,7 +2,7 @@
   <label for="name">Name</label>
   <input id="name" type="text" name="reviewer" value="<%= @input["reviewer"] %>">
   <label for="datepicker">Date</label>
-  <input id="datepicker" type="text" name="review_date" value="<%= Time.now.to_date.strftime("%m/%d/%Y") %>">
+  <input id="datepicker" type="text" name="review_date" value="<%= Time.now.to_date.strftime("%Y-%m-%d") %>" readonly="true">
   <p><%= @survey_question %></p>
   <select name="rating">
     <% (0..10).each do |number| %>

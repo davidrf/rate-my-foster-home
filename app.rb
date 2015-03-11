@@ -5,6 +5,12 @@ require 'date'
 require 'json'
 require 'pg'
 
+require_relative 'models/homes'
+require_relative 'models/questions'
+require_relative 'models/reviewers'
+require_relative 'models/reviews'
+require_relative 'models/users'
+
 use Rack::Session::Cookie, {
   secret: ENV["COOKIE_SECRET"] || "secret"
 }
@@ -23,7 +29,7 @@ def db_connection
   connection_settings = { dbname: ENV["DATABASE_NAME"] || "foster_homes" }
 
   if ENV["DATABASE_HOST"]
-    connection_settings[:host] = ENV["DATAB ASE_HOST"]
+    connection_settings[:host] = ENV["DATABASE_HOST"]
   end
 
   if ENV["DATABASE_USER"]
@@ -176,16 +182,13 @@ def store_review(review)
   add_reviewer(review["reviewer"])
   reviewer_id = get_reviewer_id(review["reviewer"])
 
-  date = review["review_date"].split("/")
-  date = [date[2], date[0], date[1]].join("-")
-
   sql_query1 = "DELETE FROM reviews WHERE review_date = $1 AND reviewer_id = $2
   AND home_id = $3"
-  data1 = [date, reviewer_id, review["id"]]
+  data1 = [review["review_date"], reviewer_id, review["id"]]
 
   sql_query2 = "INSERT INTO reviews (review_date, rating, review, reviewer_id, home_id)
   VALUES ($1, $2, $3, $4, $5) "
-  data2 = [date, review["rating"], review["explanation"], reviewer_id, review["id"]]
+  data2 = [review["review_date"], review["rating"], review["explanation"], reviewer_id, review["id"]]
 
   db_connection do |conn|
     conn.exec_params(sql_query1, data1)
@@ -245,7 +248,7 @@ end
 
 get '/foster_homes/:id' do |id|
   @reviews = get_reviews(id)
-  erb :'foster_homes/show', layout: :review_layout
+  erb :'foster_homes/show'
 end
 
 get '/foster_homes/:id/data.json' do |id|
@@ -263,7 +266,7 @@ get '/foster_homes/:id/review/:person' do |id, person|
   @person = person
   @survey_question = get_question_for(person)
   @input = Hash.new("")
-  erb :'foster_homes/review/show', layout: :review_form_layout
+  erb :'foster_homes/review/show'
 end
 
 post '/foster_homes/:id/review/:person' do |id, person|
