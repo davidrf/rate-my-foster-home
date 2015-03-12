@@ -117,7 +117,7 @@ def get_reviews(home_id)
   reviews.review, reviewers.name FROM reviews
   JOIN reviewers ON reviews.reviewer_id = reviewers.id
   JOIN homes ON reviews.home_id = homes.id
-  WHERE homes.id = $1 ORDER BY reviews.review_date DESC"
+  WHERE homes.id = $1 ORDER BY reviews.review_date DESC, ts DESC"
   reviews = nil
   db_connection do |conn|
     reviews = conn.exec_params(sql_query, [home_id])

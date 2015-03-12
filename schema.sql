@@ -27,6 +27,7 @@ CREATE TABLE reviews (
   review_date date NOT NULL,
   rating integer NOT NULL,
   review text,
+  ts timestamp DEFAULT CURRENT_TIMESTAMP,
   reviewer_id integer NOT NULL REFERENCES reviewers(id),
   home_id integer NOT NULL REFERENCES homes(id)
 );
