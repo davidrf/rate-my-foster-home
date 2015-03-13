@@ -19,7 +19,7 @@ def add_questions
   parent_question = "On a scale of 0-10, where 0 is not likely and 10 is extremely likely, how likely are you to recommend this foster home to another foster parent?"
   worker_question = "On a scale of 0-10, where 0 is not likely and 10 is extremely likely, how likely are you to recommend this foster home?"
 
-  questions = { "youth" => youth_question, "parent" => parent_question, "worker" => worker_question }
+  questions = { "Youth" => youth_question, "Parent" => parent_question, "Worker" => worker_question }
   sql_query = "INSERT INTO questions (person, question) VALUES ($1, $2)"
 
   db_connection do |conn|
@@ -43,7 +43,7 @@ def add_homes
 end
 
 def add_reviewers
-  reviewers = ["Youth 1", "Youth 2", "Parent", "Worker"]
+  reviewers = ["#{Faker::Name.name} (Youth)", "#{Faker::Name.name} (Youth)", "#{Faker::Name.name} (Parent)", "#{Faker::Name.name} (Worker)"]
   ids = []
   sql_query = "INSERT INTO reviewers (name) VALUES ($1) RETURNING id"
   db_connection do |conn|
@@ -56,26 +56,31 @@ def add_reviewers
 end
 
 def add_reviews
-    home_ids = add_homes
-    reviewer_ids = add_reviewers
-    (1..11).each do |month|
+  home_ids = add_homes
+  good_reviewer_ids = add_reviewers
+  average_reviewer_ids = add_reviewers
+  bad_reviewer_ids = add_reviewers
+  chaotic_reviewer_ids = add_reviewers
+  (1..11).each do |month|
     start_day = Date.today - 30 * month
     end_day = Date.today - 29 * month
     date = Faker::Date.between(start_day, end_day).to_s
-    reviewer_ids.each do |person|
+    good_reviewer_ids.count.times do |i|
       review = Faker::Lorem.paragraph
-
       good_rating = [8, 9, 10].sample
-      good_review = [date, good_rating, review , person, home_ids[0]]
+      good_review = [date, good_rating, review , good_reviewer_ids[i], home_ids[0]]
 
+      review = Faker::Lorem.paragraph
       average_rating = [5, 6, 7].sample
-      average_review = [date, average_rating, review , person, home_ids[1]]
+      average_review = [date, average_rating, review , average_reviewer_ids[i], home_ids[1]]
 
+      review = Faker::Lorem.paragraph
       bad_rating = rand(5)
-      bad_review = [date, bad_rating, review , person, home_ids[2]]
+      bad_review = [date, bad_rating, review , bad_reviewer_ids[i], home_ids[2]]
 
+      review = Faker::Lorem.paragraph
       chaotic_rating = rand(11)
-      chaotic_review = [date, chaotic_rating, review , person, home_ids[3]]
+      chaotic_review = [date, chaotic_rating, review , chaotic_reviewer_ids[i], home_ids[3]]
 
       sql_query = "INSERT INTO reviews (review_date, rating, review, reviewer_id, home_id) VALUES ($1, $2, $3, $4, $5)"
       db_connection do |conn|

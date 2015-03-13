@@ -302,4 +302,3 @@ SELECT pg_catalog.setval('users_id_seq', 1, true);
 --
 -- PostgreSQL database dump complete
 --
-

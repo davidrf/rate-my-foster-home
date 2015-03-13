@@ -5,3 +5,9 @@
 .button:hover {
   background-color: #96B647;
 }
+
+#review_box {
+  height: 30em;
+  margin-bottom: 2em;
+  overflow-y: scroll;
+}

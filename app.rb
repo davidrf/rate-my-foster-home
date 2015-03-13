@@ -4,6 +4,7 @@ require 'sinatra/flash'
 require 'date'
 require 'json'
 require 'pg'
+require 'openssl'
 
 require_relative 'models/homes'
 require_relative 'models/questions'
@@ -59,7 +60,9 @@ end
 
 def valid_sign_in?(input, user)
   return false if input.values.include?("") || user.nil?
-  input[:username] == user["username"] && input[:password] == user["password"]
+  sha256 = OpenSSL::Digest::SHA256.new
+  encrypted_password = [sha256.digest(input[:password])].pack('m')
+  input[:username] == user["username"] && encrypted_password == user["password"]
 end
 
 def valid_registration?(input)
@@ -70,10 +73,12 @@ def valid_registration?(input)
 end
 
 def add_user(info)
+  sha256 = OpenSSL::Digest::SHA256.new
+  encrypted_password = [sha256.digest(info[:password])].pack('m')
   sql_query = "INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id"
   user_id = nil
   db_connection do |conn|
-    user_id = conn.exec_params(sql_query, [info[:username], info[:password]])
+    user_id = conn.exec_params(sql_query, [info[:username], encrypted_password])
   end
   user_id = user_id.to_a[0]["id"]
   [1, 2, 3, 4].each { |home| assign_home(user_id, home) }
@@ -178,9 +183,10 @@ def get_reviewer_id(reviewer_name)
   id.to_a[0]["id"]
 end
 
-def store_review(review)
-  add_reviewer(review["reviewer"])
-  reviewer_id = get_reviewer_id(review["reviewer"])
+def store_review(review, person)
+  reviewer = review["reviewer"] + " (#{person})"
+  add_reviewer(reviewer)
+  reviewer_id = get_reviewer_id(reviewer)
 
   sql_query1 = "DELETE FROM reviews WHERE review_date = $1 AND reviewer_id = $2
   AND home_id = $3"
@@ -231,6 +237,11 @@ post '/register' do
   end
 end
 
+get '/sign_out' do
+  session[:user_id] = nil
+  redirect('/')
+end
+
 get '/foster_homes' do
   delete(params["home"]) if params["home"]
   @homes = retrieve_homes_for(session[:user_id])
@@ -271,9 +282,18 @@ end
 
 post '/foster_homes/:id/review/:person' do |id, person|
   if valid_review?
-    store_review(params)
-    redirect("/foster_homes/#{id}/review")
+    store_review(params, person)
+    redirect("/foster_homes/#{id}/review_submitted")
   else
     redirect(request.path)
   end
+end
+
+get '/foster_homes/:id/review_submitted' do |id|
+  @id = id
+  erb :'foster_homes/review_submitted/index'
+end
+
+get '/admin_home'
+  erb :'admins/index'
 end

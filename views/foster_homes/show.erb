@@ -4,16 +4,22 @@
   </div>
 </div>
 
-<div class="row">
+<div id="review_box" class="row">
   <div class="column">
     <% @reviews.each do |review| %>
+    <hr/>
       <div class="row">
-        <hr/>
         <div class="small-12 columns">
           <strong>Reviewer: <%= review["name"] %> Rating: <%= review["rating"] %> Date: <%= review["review_date"] %></strong>
           <p><%= review["review"] %></p>
         </div>
       </div>
     <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column">
+    <a href="/foster_homes" class="button expand">Go Home</a>
   </div>
 </div>
