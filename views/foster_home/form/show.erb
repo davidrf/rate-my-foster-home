@@ -1,9 +1,9 @@
-<form action="/foster_homes/<%= @home_id %>/review/<%= @person %>" method="post">
+<form action="<%= request.path %>" method="post">
   <label for="name">Name</label>
   <input id="name" type="text" name="reviewer" value="<%= @input["reviewer"] %>">
   <label for="datepicker">Date</label>
   <input id="datepicker" type="text" name="review_date" value="<%= Time.now.to_date.strftime("%Y-%m-%d") %>" readonly="true">
-  <p><%= @survey_question %></p>
+  <p><%= @form.question %></p>
   <select name="rating">
     <% (0..10).each do |number| %>
     <option value="<%= number %>"><%= number %></option>

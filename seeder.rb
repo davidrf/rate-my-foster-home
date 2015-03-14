@@ -19,8 +19,8 @@ def add_questions
   parent_question = "On a scale of 0-10, where 0 is not likely and 10 is extremely likely, how likely are you to recommend this foster home to another foster parent?"
   worker_question = "On a scale of 0-10, where 0 is not likely and 10 is extremely likely, how likely are you to recommend this foster home?"
 
-  questions = { "Youth" => youth_question, "Parent" => parent_question, "Worker" => worker_question }
-  sql_query = "INSERT INTO questions (person, question) VALUES ($1, $2)"
+  questions = { "Foster Youth" => youth_question, "Parent Form" => parent_question, "Worker Form" => worker_question }
+  sql_query = "INSERT INTO forms (name, question) VALUES ($1, $2)"
 
   db_connection do |conn|
     questions.each do |person, question|
@@ -43,12 +43,13 @@ def add_homes
 end
 
 def add_reviewers
-  reviewers = ["#{Faker::Name.name} (Youth)", "#{Faker::Name.name} (Youth)", "#{Faker::Name.name} (Parent)", "#{Faker::Name.name} (Worker)"]
+  reviewers = ["#{Faker::Name.name}", "#{Faker::Name.name}", "#{Faker::Name.name}", "#{Faker::Name.name}"]
   ids = []
-  sql_query = "INSERT INTO reviewers (name) VALUES ($1) RETURNING id"
+  type = ["Youth", "Youth", "Parent", "Worker"]
+  sql_query = "INSERT INTO reviewers (name, type) VALUES ($1, $2) RETURNING id"
   db_connection do |conn|
-    reviewers.each do |name|
-      id = conn.exec_params(sql_query, [name])
+    reviewers.each_with_index do |name, index|
+      id = conn.exec_params(sql_query, [name, type[index]])
       ids << id.to_a[0]["id"]
     end
   end
@@ -82,7 +83,7 @@ def add_reviews
       chaotic_rating = rand(11)
       chaotic_review = [date, chaotic_rating, review , chaotic_reviewer_ids[i], home_ids[3]]
 
-      sql_query = "INSERT INTO reviews (review_date, rating, review, reviewer_id, home_id) VALUES ($1, $2, $3, $4, $5)"
+      sql_query = "INSERT INTO reviews (review_date, rating, comment, reviewer_id, home_id) VALUES ($1, $2, $3, $4, $5)"
       db_connection do |conn|
         conn.exec_params(sql_query, good_review)
         conn.exec_params(sql_query, average_review)

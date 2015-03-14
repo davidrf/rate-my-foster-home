@@ -1,0 +1,6 @@
+<ul class="stack button-group radius">
+  <% @forms.each do |form| %>
+  <li><a href="<%= request.path %>/<%= form.id %>" class="button large black"><%= form.name %></a></li>
+  <% end %>
+  <li><a href="/foster_home" class="button large">Home</a></li>
+</ul>

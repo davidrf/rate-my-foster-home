@@ -6,12 +6,12 @@
 
 <div id="review_box" class="row">
   <div class="column">
-    <% @reviews.each do |review| %>
+    <% @home.reviews.each do |review| %>
     <hr/>
       <div class="row">
         <div class="small-12 columns">
-          <strong>Reviewer: <%= review["name"] %> Rating: <%= review["rating"] %> Date: <%= review["review_date"] %></strong>
-          <p><%= review["review"] %></p>
+          <strong>Reviewer: <%= review.reviewer.name %> (<%= review.reviewer.type %>) Rating: <%= review.rating %> Date: <%= review.date %></strong>
+          <p><%= review.comment %></p>
         </div>
       </div>
     <% end %>
@@ -20,6 +20,6 @@
 
 <div class="row">
   <div class="column">
-    <a href="/foster_homes" class="button expand">Go Home</a>
+    <a href="/foster_home" class="button expand">Go Home</a>
   </div>
 </div>

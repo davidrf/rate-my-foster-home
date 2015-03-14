@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS questions, reviews, reviewers, user_homes, homes, users;
+DROP TABLE IF EXISTS forms, reviews, reviewers, user_homes, homes, users;
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
@@ -19,21 +19,22 @@ CREATE TABLE user_homes (
 
 CREATE TABLE reviewers (
   id SERIAL PRIMARY KEY,
-  name varchar(255) NOT NULL UNIQUE
+  name varchar(255) NOT NULL UNIQUE,
+  type varchar(255) NOT NULL
 );
 
 CREATE TABLE reviews (
   id SERIAL PRIMARY KEY,
   review_date date NOT NULL,
   rating integer NOT NULL,
-  review text,
+  comment text,
   ts timestamp DEFAULT CURRENT_TIMESTAMP,
   reviewer_id integer NOT NULL REFERENCES reviewers(id),
   home_id integer NOT NULL REFERENCES homes(id)
 );
 
-CREATE TABLE questions (
+CREATE TABLE forms (
   id SERIAL PRIMARY KEY,
-  person varchar(10),
+  name varchar(255),
   question text
 );
