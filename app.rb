@@ -38,7 +38,7 @@ end
 
 post '/sign_in' do
   if User.valid_sign_in?(params)
-    user = User.find(params["username"])
+    user = User.find_by(params["username"])
     session[:user_id] = user.id
     redirect('/foster_home')
   else

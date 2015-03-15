@@ -1,5 +1,11 @@
 <div class="row">
   <div class="column">
+    <h4>Reviews for <%= @home.name %></h4>
+  </div>
+</div>
+
+<div class="row">
+  <div class="hide-for-small-only column">
     <div id="curve_chart"></div>
   </div>
 </div>
@@ -7,13 +13,14 @@
 <div id="review_box" class="row">
   <div class="column">
     <% @home.reviews.each do |review| %>
-    <hr/>
       <div class="row">
         <div class="small-12 columns">
-          <strong>Reviewer: <%= review.reviewer.name %> (<%= review.reviewer.type %>) Rating: <%= review.rating %> Date: <%= review.date %></strong>
+          <strong>Date: <%= review.date %> Type: <%= review.reviewer.type %></strong><br>
+          <strong>Reviewer: <%= review.reviewer.name %>  Rating: <%= review.rating %></strong>
           <p><%= review.comment %></p>
         </div>
       </div>
+      <hr/>
     <% end %>
   </div>
 </div>

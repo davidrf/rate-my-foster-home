@@ -30,7 +30,7 @@ class Home
       JOIN homes ON reviews.home_id = homes.id
       WHERE reviews.home_id = $1 ORDER BY
       reviews.review_date DESC, reviews.ts DESC"
-      reviews_info = conn.exec_params(sql_query, [id])
+      conn.exec_params(sql_query, [id])
     end
     home_name = reviews_info.to_a[0]["name"]
     reviews = reviews_info.to_a.map do |review|

@@ -1,15 +1,21 @@
-<h1>Foster Homes</h1>
-<br>
+<h6>Your Assigned Foster Homes</h6>
+<hr>
 <% @homes.each do |home| %>
-      <hr/>
       <div class="row">
-        <div class="small-6 columns">
-          <p><%= home.name %></p>
+        <div class="small-4 columns visible-for-small-only">
+          <span><%= home.name %></span>
         </div>
-        <div class="small-6 columns">
-          <ul id="<%= home.id %>" class="button-group radius">
-            <li><a href="/foster_home/<%= home.id %>" class="button">See Reviews</a></li>
-            <li><a href="/foster_home/<%= home.id %>/form" class="button">Review</a></li>
+        <div class="small-4 columns hidden-for-small-only">
+          <h3><%= home.name %></h3>
+        </div>
+        <div class="small-8 columns">
+          <ul id="<%= home.id %>" class="button-group radius visible-for-small-only">
+            <li><a href="/foster_home/<%= home.id %>" class="button tiny">Reviews</a></li>
+            <li><a href="/foster_home/<%= home.id %>/form" class="button tiny">New Review</a></li>
+          </ul>
+          <ul id="<%= home.id %>" class="button-group even-2 radius hidden-for-small-only">
+            <li><a href="/foster_home/<%= home.id %>" class="button">Reviews</a></li>
+            <li><a href="/foster_home/<%= home.id %>/form" class="button">New Review</a></li>
           </ul>
         </div>
       </div>

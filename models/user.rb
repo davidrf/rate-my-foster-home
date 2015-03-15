@@ -11,7 +11,7 @@ class User
   def self.valid_sign_in?(input)
     return false if input.values.include?("")
 
-    user = User.find(input["username"])
+    user = User.find_by(input["username"])
     if user.exists?
       sha256 = OpenSSL::Digest::SHA256.new
       input_password = [sha256.digest(input["password"])].pack('m')
@@ -21,10 +21,19 @@ class User
     end
   end
 
-  def self.find(username)
+  def self.find_by(username)
     user_info = db_connection do |conn|
       sql_query = "SELECT * FROM users WHERE username = $1"
       conn.exec_params(sql_query, [username])
+    end
+    user_info = user_info.to_a[0] || {}
+    User.new(user_info["id"], user_info["username"], user_info["password"])
+  end
+
+  def self.find(id)
+    user_info = db_connection do |conn|
+      sql_query = "SELECT * FROM users WHERE id = $1"
+      conn.exec_params(sql_query, [id])
     end
     user_info = user_info.to_a[0] || {}
     User.new(user_info["id"], user_info["username"], user_info["password"])
@@ -34,7 +43,7 @@ class User
     if input.values.include?("") || input["password"] != input["confirm_password"]
       false
     else
-      user = User.find(input["username"])
+      user = User.find_by(input["username"])
       !user.exists?
     end
   end

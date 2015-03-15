@@ -7,12 +7,22 @@
 }
 
 #review_box {
-  height: 30em;
+  height: 20em;
   margin-bottom: 2em;
   overflow-y: scroll;
 }
 
 #curve_chart {
-  width: 60em;
   height: 33em;
+  width: 100%;
+}
+
+img {
+  width:10em;
+  height: auto;
+  margin-bottom: 1em;
+}
+
+span {
+  font-size: 6pt;
 }

@@ -30,12 +30,11 @@ def add_questions
 end
 
 def add_homes
-  homes = ["Good Home", "Average Home", "Bad Home", "Chaotic Home"]
   ids = []
   sql_query = "INSERT INTO homes (name) VALUES ($1) RETURNING id"
   db_connection do |conn|
-    homes.each do |name|
-      id = conn.exec_params(sql_query, [name])
+    4.times do
+      id = conn.exec_params(sql_query, [Faker::Address.street_address])
       ids << id.to_a[0]["id"]
     end
   end
