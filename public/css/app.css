@@ -11,3 +11,8 @@
   margin-bottom: 2em;
   overflow-y: scroll;
 }
+
+#curve_chart {
+  width: 60em;
+  height: 33em;
+}
