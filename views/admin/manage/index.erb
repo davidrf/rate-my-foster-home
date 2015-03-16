@@ -1,0 +1,83 @@
+<form action="<%= request.path %>" method="post">
+<div class="row">
+  <div class="small-2 columns">
+    <label for="add_home" class="right inline">Add Home</label>
+  </div>
+  <div class="small-8 columns">
+    <input id="add_home" type="text" name="home_name">
+  </div>
+  <div class="small-2 columns">
+    <input type="submit" name="action" value="Add Home" class="button tiny expand"/>
+  </div>
+</div>
+</form>
+
+<form action="<%= request.path %>" method="post">
+<div class="row">
+  <div class="small-2 columns">
+    <label for="delete_home" class="right inline">Delete Home</label>
+  </div>
+  <div class="small-8 columns">
+    <select id="delete_home "name="home_id">
+      <% @homes.each do |home| %>
+      <option value="<%= home.id %>"><%= home.name %></option>
+      <% end %>
+    </select>
+  </div>
+  <div class="small-2 columns">
+    <input type="submit" name="action" value="Delete Home" class="button tiny expand"/>
+  </div>
+</div>
+</form>
+
+<form action="<%= request.path %>" method="post">
+<div class="row">
+  <div class="small-2 columns">
+    <label for="assign_home_user" class="right inline">Assign Home</label>
+  </div>
+  <div class="small-4 columns">
+    <select name="user_id" id="assign_home_user">
+      <% @users.each do |user| %>
+      <option value="<%= user.id %>"><%= user.name %></option>
+      <% end %>
+    </select>
+  </div>
+  <div class="small-4 columns">
+    <select name="home_id">
+      <% @homes.each do |home| %>
+      <option value="<%= home.id %>"><%= home.name %></option>
+      <% end %>
+    </select>
+  </div>
+  <div class="small-2 columns">
+    <input type="submit" name="action" value="Assign Home" class="button tiny expand"/>
+  </div>
+</div>
+</form>
+
+<form action="<%= request.path %>" method="post">
+<div class="row">
+  <div class="small-2 columns">
+    <label for="users_dropdown" class="right inline">Unassign Home</label>
+  </div>
+  <div class="small-4 columns">
+    <select id="users_dropdown" name="user_id">
+      <% @users.each do |user| %>
+      <option value="<%= user.id %>"><%= user.name %></option>
+      <% end %>
+    </select>
+  </div>
+  <div class="small-4 columns">
+    <select id="homes_dropdown" name="home_id"></select>
+  </div>
+  <div class="small-2 columns">
+    <input type="submit" name="action" value="Unassign Home" class="button tiny expand"/>
+  </div>
+</div>
+</form>
+
+<div class="row">
+  <div class="column">
+    <a href="/admin" class="button expand">Admin Home</a>
+  </div>
+</div>

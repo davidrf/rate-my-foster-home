@@ -3,7 +3,8 @@ DROP TABLE IF EXISTS forms, reviews, reviewers, user_homes, homes, users;
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username varchar(100) NOT NULL UNIQUE,
-  password varchar(100) NOT NULL
+  password varchar(100) NOT NULL,
+  admin_status boolean NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE homes (

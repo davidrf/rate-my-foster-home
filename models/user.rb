@@ -1,11 +1,12 @@
 class User
   extend Database
-  attr_reader :id, :name, :password
+  attr_reader :id, :name, :password, :admin_status
 
-  def initialize(id, name, password)
+  def initialize(id, name, password, admin_status = false)
     @id = id
     @name = name
     @password = password
+    @admin_status = admin_status
   end
 
   def self.valid_sign_in?(input)
@@ -27,7 +28,7 @@ class User
       conn.exec_params(sql_query, [username])
     end
     user_info = user_info.to_a[0] || {}
-    User.new(user_info["id"], user_info["username"], user_info["password"])
+    User.new(user_info["id"], user_info["username"], user_info["password"], user_info["admin_status"])
   end
 
   def self.find(id)
@@ -61,13 +62,31 @@ class User
     user
   end
 
-  def self.assign_home(user_id, home_id)
+  def self.assign_home(input)
     db_connection do |conn|
       sql_query = "INSERT INTO user_homes (user_id, home_id) SELECT $1, $2
       WHERE NOT EXISTS(SELECT 1 FROM user_homes
       WHERE user_id = $1 AND home_id = $2)"
-      conn.exec_params(sql_query, [user_id, home_id])
+      conn.exec_params(sql_query, [input["user_id"], input["home_id"]])
     end
+  end
+
+  def self.unassign_home(input)
+    db_connection do |conn|
+      sql_query = "DELETE FROM user_homes WHERE user_id = $1 AND home_id = $2"
+      conn.exec_params(sql_query, [input["user_id"], input["home_id"]])
+    end
+  end
+
+  def self.all
+    users_info = db_connection do |conn|
+      conn.exec("SELECT * FROM users")
+    end
+    users = users_info.to_a.map do |user_info|
+      User.new(user_info["id"], user_info["username"], user_info["password"], user_info["admin_status"])
+    end
+    users.delete_if { |user| user.admin_status == "t"}
+    users
   end
 
   def exists?
@@ -75,6 +94,9 @@ class User
   end
 
   def assign_shared_homes
-    [1, 2, 3, 4].each { |home| User.assign_home(@id, home) }
+    (1..4).each do |home_id|
+      input = { "user_id" => @id, "home_id" => home_id }
+      User.assign_home(input)
+    end
   end
 end

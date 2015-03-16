@@ -1,5 +1,25 @@
-<form action="/admin_home" method="post">
-  <label for="username">Add Home</label>
-  <input type="text" name="home" placeholder="Home Name">
-  <input type="submit">
-</form>
+<div class="row">
+  <div class="small-2 columns">
+    <label for="user_homes_dropdown" class="right inline">Assigned Homes for: </label>
+  </div>
+    <div class="small-10 columns">
+    <select id="user_homes_dropdown" name="user_id">
+    <% @users.each do |user| %>
+    <option value="<%= user.id %>"><%= user.name %></option>
+    <% end %>
+    </select>
+  </div>
+</div>
+
+<hr>
+<div id="home_rows"></div>
+<div class="row">
+  <div class="column">
+    <a href="/admin/manage" class="button expand">Manage Homes</a>
+  </div>
+</div>
+<div class="row">
+  <div class="column">
+    <a href="/sign_out" class="button expand">Sign Out</a>
+  </div>
+</div>

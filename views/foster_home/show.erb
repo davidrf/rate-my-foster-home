@@ -1,10 +1,10 @@
 <div class="row">
-  <div class="column">
+  <div class="column text-center">
     <h4>Reviews for <%= @home.name %></h4>
   </div>
 </div>
 
-<div class="row">
+<div id="graph_container" class="row">
   <div class="hide-for-small-only column">
     <div id="curve_chart"></div>
   </div>
@@ -27,6 +27,6 @@
 
 <div class="row">
   <div class="column">
-    <a href="/foster_home" class="button expand">Go Home</a>
+    <a href="<%= admin? %>" class="button expand">Go Home</a>
   </div>
 </div>

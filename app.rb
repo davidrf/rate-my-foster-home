@@ -27,6 +27,16 @@ Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
   also_reload file
 end
 
+helpers do
+  def admin?
+    if session[:admin]
+      "/admin"
+    else
+      "/foster_home"
+    end
+  end
+end
+
 get '/' do
   redirect('/sign_in')
 end
@@ -40,7 +50,12 @@ post '/sign_in' do
   if User.valid_sign_in?(params)
     user = User.find_by(params["username"])
     session[:user_id] = user.id
-    redirect('/foster_home')
+    session[:admin] = user.admin_status
+    if user.admin_status == "t"
+      redirect('/admin')
+    else
+      redirect('/foster_home')
+    end
   else
     @input = params
     erb :sign_in
@@ -55,7 +70,6 @@ end
 post '/register' do
   if User.valid_registration?(params)
     user = User.add(params)
-    session[:user_id] = user.id
     redirect('/sign_in')
   else
     @input = params
@@ -65,6 +79,7 @@ end
 
 get '/sign_out' do
   session[:user_id] = nil
+  session[:admin] = nil
   redirect('/')
 end
 
@@ -96,7 +111,6 @@ end
 
 post '/foster_home/:home_id/form/:form_id' do |home_id, form_id|
   if Form.valid_submission?(params)
-    #line below to be removed in future
     params["reviewer_id"] = Reviewer.add(params).id
     Review.add(params)
     redirect(request.path + "/submitted")
@@ -109,15 +123,36 @@ get '/foster_home/:home_id/form/:form_id/submitted' do |home_id, form_id|
   erb :'foster_home/form/submitted/index'
 end
 
-get '/admin_home' do
-  erb :'admins/index'
+get '/admin' do
+  @users = User.all
+  erb :'admin/index'
 end
 
-post '/admin_home' do
-  unless params[:home].empty?
-    add_home(params[:home])
-    home_id = get_home_id(params[:home])
-    assign_home(session[:user_id], home_id)
+get '/admin/data.json' do
+  content_type :json
+  { data: Home.all_data(params["user_id"]) }.to_json
+end
+
+get '/admin/manage' do
+  @homes = Home.all
+  @users = User.all
+  erb :'admin/manage/index'
+end
+
+get '/admin/manage/data.json' do
+  content_type :json
+  { data: Home.all_data(params["user_id"]) }.to_json
+end
+
+post '/admin/manage' do
+  if params["action"] == "Add Home"
+    Home.add(params) unless params["home_name"].empty?
+  elsif params["action"] == "Delete Home"
+    Home.delete(params)
+  elsif params["action"] == "Assign Home"
+    User.assign_home(params)
+  elsif params["action"] == "Unassign Home"
+    User.unassign_home(params)
   end
-  redirect('/admin_home')
+  redirect('/admin/manage')
 end
