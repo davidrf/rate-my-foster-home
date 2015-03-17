@@ -29,7 +29,7 @@ end
 
 helpers do
   def admin?
-    if session[:admin]
+    if session[:admin] == "t"
       "/admin"
     else
       "/foster_home"
